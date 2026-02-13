@@ -33,7 +33,7 @@ def generate_launch_description():
 
     declare_world_path_rel = DeclareLaunchArgument(
         name='world_path_rel',
-        default_value='cafe.sdf',
+        default_value='model.sdf',
         description='Name of the demo world to load'
     )
 
@@ -69,7 +69,7 @@ def generate_launch_description():
 
     declare_z = DeclareLaunchArgument(
         name='z',
-        default_value='0.05',
+        default_value='0.25',
         description='z component of initial position, meters'
     )
         
