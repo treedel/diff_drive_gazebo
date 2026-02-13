@@ -15,7 +15,7 @@ def generate_launch_description():
     use_ekf_odom = LaunchConfiguration('use_ekf_odom')
     use_rviz = LaunchConfiguration('use_rviz')
     use_sim_time = LaunchConfiguration('use_sim_time')
-    world_name = LaunchConfiguration('world_name')
+    world_path_rel = LaunchConfiguration('world_path_rel')
     rviz_config_path = LaunchConfiguration('rviz_config_path')
 
     x = LaunchConfiguration('x')
@@ -31,9 +31,9 @@ def generate_launch_description():
         description='Whether to start ekf filter for odometry'
     )
 
-    declare_world_name = DeclareLaunchArgument(
-        name='world_name',
-        default_value='empty.sdf',
+    declare_world_path_rel = DeclareLaunchArgument(
+        name='world_path_rel',
+        default_value='cafe.sdf',
         description='Name of the demo world to load'
     )
 
@@ -92,6 +92,11 @@ def generate_launch_description():
         description='yaw angle of initial orientation, radians'
     )
 
+    set_env_vars_resources = AppendEnvironmentVariable(
+        'GZ_SIM_RESOURCE_PATH',
+        os.path.join('package_share', 'worlds')
+    )
+
     package_tb3_description = FindPackageShare(package='tb3_description').find('tb3_description')
     robot_description = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -104,12 +109,13 @@ def generate_launch_description():
         }.items()
     )
 
+    world = PathJoinSubstitution([package_share, 'worlds', world_path_rel])
     package_ros_gz_sim = FindPackageShare(package='ros_gz_sim').find('ros_gz_sim')
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(package_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
             launch_arguments={
-                'gz_args': ['-r ', world_name],
+                'gz_args': ['-r ', world],
                 'on_exit_shutdown': 'true',
                 'use_sim_time': use_sim_time
         }.items()
@@ -190,9 +196,9 @@ def generate_launch_description():
     ld.add_action(declare_use_rviz)
     ld.add_action(declare_rviz_config_path)
     ld.add_action(declare_use_sim_time)
-    ld.add_action(declare_use_sim_time)
+    ld.add_action(set_env_vars_resources)
 
-    ld.add_action(declare_world_name)
+    ld.add_action(declare_world_path_rel)
     ld.add_action(declare_x)
     ld.add_action(declare_y)
     ld.add_action(declare_z)
