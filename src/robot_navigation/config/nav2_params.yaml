@@ -410,7 +410,7 @@ docking_server:
 
     # Dock instances
     # The following example illustrates configuring dock instances.
-    dock_database: $(find-pkg-share libbot_navigation)/config/dock_database.yaml
+    dock_database: $(find-pkg-share robot_navigation)/config/dock_database.yaml
 
     controller:
       k_phi: 3.0
